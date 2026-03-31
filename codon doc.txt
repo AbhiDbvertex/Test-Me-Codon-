@@ -1,0 +1,8 @@
+FIGMA: https://www.figma.com/design/wq80ImGQEVOsSNq0Np9T9v/CODON?node-id=0-1&p=f&t=l9Yywm645ZQteli%E2%80%A6
+
+api: https://coden.graphicsvolume.com/api-docs/
+
+admin: https://admin.coden.frontend.graphicsvolume.com/
+
+email - admin_test@gmail.com
+password - 123456
