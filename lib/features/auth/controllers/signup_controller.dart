@@ -31,7 +31,6 @@ class SignUpController extends GetxController {
 
   // final password = passwordController.text;
 
-
   // Data Lists
   final states = <LocationModel>[].obs;
   final cities = <LocationModel>[].obs;
@@ -44,8 +43,8 @@ class SignUpController extends GetxController {
   final LocationService _locationService = Get.find<LocationService>();
 
   final List<String> years = List.generate(
-    12,
-    (index) => (DateTime.now().year - index).toString(),
+    3,
+    (index) => (DateTime.now().year + index).toString(),
   );
 
   @override
@@ -121,10 +120,10 @@ class SignUpController extends GetxController {
           Get.to(
             () => const VerifyOtpScreen(),
             // arguments: {"email": emailController.text,'passwrod':passingYearController.text},
-              arguments: {
-                "email": emailController.text,
-                "password": passwordController.text
-              }
+            arguments: {
+              "email": emailController.text,
+              "password": passwordController.text,
+            },
           );
         } else {
           Get.snackbar(

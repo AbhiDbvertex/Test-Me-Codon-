@@ -211,7 +211,7 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
             // ),
             SizedBox(height: 0.01.toHeightPercent()),
             Text(
-             " codon Id-${ detail.topic.codonId}",
+              " codon Id-${detail.topic.codonId}",
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -392,13 +392,21 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
                   );
                 },
                 itemBuilder: (context) => [
-                  _buildPopupItem('mostimportant', 'Most Important', Colors.red),
-                  _buildPopupItem('veryimportant', 'Very Important', Colors.orange),
+                  _buildPopupItem(
+                    'mostimportant',
+                    'Most Important',
+                    Colors.red,
+                  ),
+                  _buildPopupItem(
+                    'veryimportant',
+                    'Very Important',
+                    Colors.orange,
+                  ),
                   _buildPopupItem('important', 'Important', Colors.blue),
                   _buildPopupItem('removed', 'remove', Colors.grey),
                 ],
               );
-            })
+            }),
           ],
         ),
         SizedBox(height: 0.01.toHeightPercent()),
@@ -437,7 +445,9 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
       crossAxisSpacing: 0.02.toWidthPercent(),
       children: [
         //_buildStatCard(Icons.play_circle, "Videos", stats.videos),
-       detail.stats.mcqs == 0 ? Container() : _buildStatCard(Icons.quiz, "MCQs", detail.stats.mcqs, detail),
+        detail.stats.mcqs == 0
+            ? Container()
+            : _buildStatCard(Icons.quiz, "MCQs", detail.stats.mcqs, detail),
         // _buildStatCard(Icons.note, "Notes", stats.notes),
       ],
     );
@@ -463,7 +473,7 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
               //   chapterName: detail.hierarchy.chapter,
               //   codeonpass: "codon",
               // ),
-                () => MCQScreen(topicId: detail.topic.id, codonpass: "codon",)
+              () => MCQScreen(topicId: detail.topic.id, codonpass: "codon"),
             );
           } else {
             Get.to(() => const SubscriptionScreen());

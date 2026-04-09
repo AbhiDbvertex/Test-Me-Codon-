@@ -30,106 +30,111 @@ class CustomTestMcqScreen extends StatelessWidget {
         if (didPop) return;
         _showQuitConfirmationDialog(context, controller);
       },
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF8F8F8),
-        appBar: AppBar(
-          title: Text(
-            isRegularMode ? 'Practice Mode' : 'Exam Mode',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+      child: SafeArea(
+        top: false,
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF8F8F8),
+          appBar: AppBar(
+            title: Text(
+              isRegularMode ? 'Practice Mode' : 'Exam Mode',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          actions: [
-            if (customTest.isTimerRequired)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.red[50],
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.red[200]!),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.timer, size: 18, color: Colors.red[700]),
-                        const SizedBox(width: 4),
-                        Obx(
-                          () => Text(
-                            controller.timeDisplay.value,
-                            style: TextStyle(
-                              color: Colors.red[700],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            actions: [
+              if (customTest.isTimerRequired)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.red[200]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.timer, size: 18, color: Colors.red[700]),
+                          const SizedBox(width: 4),
+                          Obx(
+                            () => Text(
+                              controller.timeDisplay.value,
+                              style: TextStyle(
+                                color: Colors.red[700],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
+              IconButton(
+                icon: const Icon(Icons.close, color: Colors.black, size: 28),
+                onPressed: () =>
+                    _showQuitConfirmationDialog(context, controller),
               ),
-            IconButton(
-              icon: const Icon(Icons.close, color: Colors.black, size: 28),
-              onPressed: () => _showQuitConfirmationDialog(context, controller),
-            ),
-          ],
-        ),
-        body: customTest.data.isEmpty
-            ? const Center(child: Text('No questions available'))
-            : Column(
-                children: [
-                  Obx(() => _buildDotsIndicator(controller)),
-                  Expanded(
-                    child: PageView.builder(
-                      controller: controller.pageController,
-                      onPageChanged: controller.onPageChanged,
-                      itemCount: customTest.data.length,
-                      itemBuilder: (context, index) {
-                        final question = customTest.data[index];
-                        return Obx(() {
-                          return SingleChildScrollView(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 0.04.toWidthPercent(),
-                            ),
-                            child: Column(
-                              children: [
-                                SizedBox(height: 0.02.toHeightPercent()),
-                                _buildQuestionCard(
-                                  question,
-                                  index,
-                                  controller,
-                                  isRegularMode,
-                                ),
-                                SizedBox(height: 0.02.toHeightPercent()),
-                                if (isRegularMode &&
-                                    controller.userAnswers[question.id] != null)
-                                  _buildExplanationSection(
+            ],
+          ),
+          body: customTest.data.isEmpty
+              ? const Center(child: Text('No questions available'))
+              : Column(
+                  children: [
+                    Obx(() => _buildDotsIndicator(controller)),
+                    Expanded(
+                      child: PageView.builder(
+                        controller: controller.pageController,
+                        onPageChanged: controller.onPageChanged,
+                        itemCount: customTest.data.length,
+                        itemBuilder: (context, index) {
+                          final question = customTest.data[index];
+                          return Obx(() {
+                            return SingleChildScrollView(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 0.04.toWidthPercent(),
+                              ),
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 0.02.toHeightPercent()),
+                                  _buildQuestionCard(
                                     question,
+                                    index,
                                     controller,
+                                    isRegularMode,
                                   ),
-                                SizedBox(height: 0.04.toHeightPercent()),
-                              ],
-                            ),
-                          );
-                        });
-                      },
+                                  SizedBox(height: 0.02.toHeightPercent()),
+                                  if (isRegularMode &&
+                                      controller.userAnswers[question.id] !=
+                                          null)
+                                    _buildExplanationSection(
+                                      question,
+                                      controller,
+                                    ),
+                                  SizedBox(height: 0.04.toHeightPercent()),
+                                ],
+                              ),
+                            );
+                          });
+                        },
+                      ),
                     ),
-                  ),
-                  Obx(() => _buildBottomNav(controller)),
-                ],
-              ),
+                    Obx(() => _buildBottomNav(controller)),
+                  ],
+                ),
+        ),
       ),
     );
   }

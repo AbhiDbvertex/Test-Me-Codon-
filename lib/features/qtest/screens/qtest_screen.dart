@@ -90,12 +90,12 @@ class QTestScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              addCircleIcon,
-              width: 24,
-              height: 24,
-              color: Colors.white,
-            ),
+            // Image.asset(
+            //   addCircleIcon,
+            //   width: 24,
+            //   height: 24,
+            //   color: Colors.white,
+            // ),
             SizedBox(width: 0.03.toWidthPercent()),
             Text(
               'Custom Module MCQs',
@@ -112,7 +112,10 @@ class QTestScreen extends StatelessWidget {
 
   Widget _buildSubjectTile(subject) {
     return GestureDetector(
-      onTap: () => Get.to(() => QTestSubSubjectScreen(subject: subject,savebookmark: savebookmark,)),
+      onTap: () => Get.to(
+        () =>
+            QTestSubSubjectScreen(subject: subject, savebookmark: savebookmark),
+      ),
       child: Container(
         margin: EdgeInsets.only(bottom: 0.02.toHeightPercent()),
         padding: EdgeInsets.symmetric(

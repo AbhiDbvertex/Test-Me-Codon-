@@ -15,7 +15,7 @@ class MCQScreen extends StatelessWidget {
   final ChapterTestModel? qTest;
   final topicId;
   final codonpass;
-  const MCQScreen({super.key,  this.qTest, this.topicId, this.codonpass});
+  const MCQScreen({super.key, this.qTest, this.topicId, this.codonpass});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +25,9 @@ class MCQScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // controller.fetchQTest(topicId);
       print("Abhi:- MCQScreen topicId: ${topicId}");
-      if(codonpass== 'codon'){
+      if (codonpass == 'codon') {
         controller.fetchQTest(topicId);
-      }else{
+      } else {
         controller.fetchQTest(qTest!.id); //
       }
     });
@@ -124,7 +124,8 @@ class MCQScreen extends StatelessWidget {
                           height: 8,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: index == controller.currentQuestionIndex.value
+                            color:
+                                index == controller.currentQuestionIndex.value
                                 ? AppColors.primary
                                 : Colors.grey[300],
                           ),
@@ -168,7 +169,6 @@ class MCQScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-
                                       children: [
                                         Expanded(
                                           child: Text(
@@ -176,22 +176,36 @@ class MCQScreen extends StatelessWidget {
                                                 ". " +
                                                 currentQuestion.question.text,
                                             style: TextStyle(
-                                              fontSize: 0.042.toWidthPercent(),
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColors.primary,
+                                              fontSize: 0.048.toWidthPercent(),
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color.fromARGB(
+                                                255,
+                                                54,
+                                                92,
+                                                95,
+                                              ),
                                             ),
                                           ),
                                         ),
                                         Obx(() {
-                                          final bookmarkCtrl = Get.put(BookmarkController());
+                                          final bookmarkCtrl = Get.put(
+                                            BookmarkController(),
+                                          );
 
-                                          final isBookmarked = bookmarkCtrl.isBookmarked( currentQuestion.question.mcqId);
-                                          final category = bookmarkCtrl.getCategory(currentQuestion.question.mcqId);
+                                          final isBookmarked = bookmarkCtrl
+                                              .isBookmarked(
+                                                currentQuestion.question.mcqId,
+                                              );
+                                          final category = bookmarkCtrl
+                                              .getCategory(
+                                                currentQuestion.question.mcqId,
+                                              );
 
                                           Color iconColor;
 
                                           if (!isBookmarked) {
-                                            iconColor = AppColors.primary.withOpacity(0.5);
+                                            iconColor = AppColors.primary
+                                                .withOpacity(0.5);
                                           } else {
                                             switch (category) {
                                               case 'mostimportant':
@@ -210,27 +224,48 @@ class MCQScreen extends StatelessWidget {
 
                                           return PopupMenuButton<String>(
                                             icon: Icon(
-                                              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                                              isBookmarked
+                                                  ? Icons.bookmark
+                                                  : Icons.bookmark_border,
                                               color: iconColor,
                                               size: 0.06.toWidthPercent(),
                                             ),
                                             onSelected: (value) {
                                               bookmarkCtrl.toggleBookmark(
                                                 type: "mcq",
-                                                itemId: currentQuestion.question.mcqId,
+                                                itemId: currentQuestion
+                                                    .question
+                                                    .mcqId,
                                                 category: value,
                                               );
                                             },
                                             itemBuilder: (context) => [
-                                              _buildPopupItem('mostimportant', 'Most Important', Colors.red),
-                                              _buildPopupItem('veryimportant', 'Very Important', Colors.orange),
-                                              _buildPopupItem('important', 'Important', Colors.blue),
-                                              _buildPopupItem('removed', 'remove', Colors.grey),
+                                              _buildPopupItem(
+                                                'mostimportant',
+                                                'Most Important',
+                                                Colors.red,
+                                              ),
+                                              _buildPopupItem(
+                                                'veryimportant',
+                                                'Very Important',
+                                                Colors.orange,
+                                              ),
+                                              _buildPopupItem(
+                                                'important',
+                                                'Important',
+                                                Colors.blue,
+                                              ),
+                                              _buildPopupItem(
+                                                'removed',
+                                                'remove',
+                                                Colors.grey,
+                                              ),
                                             ],
                                           );
-                                        })
+                                        }),
                                       ],
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                     ),
 
                                     if (currentQuestion
@@ -241,6 +276,7 @@ class MCQScreen extends StatelessWidget {
                                       ...currentQuestion.question.images.map(
                                         (img) =>
                                             _buildQuestionImage(baseUrl + img),
+
                                         // (img) => ClipRRect(
                                         //   borderRadius: BorderRadius.circular(12),
                                         //   child: Container(
@@ -257,9 +293,7 @@ class MCQScreen extends StatelessWidget {
                                         //     ),
                                         //   ),
                                         // ),
-
                                       ),
-
                                     ],
                                     SizedBox(height: 0.03.toHeightPercent()),
                                     Divider(color: AppColors.primary),
@@ -443,6 +477,7 @@ class MCQScreen extends StatelessWidget {
                                       ),
                                       width: 0.6.toWidthPercent(),
                                       height: 0.06.toHeightPercent(),
+
                                       // child: ElevatedButton(
                                       //   onPressed: controller.togglePearl,
                                       //   style: ElevatedButton.styleFrom(
@@ -466,50 +501,45 @@ class MCQScreen extends StatelessWidget {
                                       //     ),
                                       //   ),
                                       // ),
-
-                                child: ElevatedButton(
-                                  onPressed: controller.togglePearl,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                    AppColors.primary,
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: 0.012
-                                          .toHeightPercent(),
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                        0.02.toWidthPercent(),
-                                      ),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        controller.showPearl.value
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        size: 0.045.toWidthPercent(),
-                                      ),
-                                      SizedBox(
-                                        width: 0.02.toWidthPercent(),
-                                      ),
-                                      Text(
-                                        controller.showPearl.value
-                                            ? 'Hide Explanation'
-                                            : 'View Explanation',
-                                        style: TextStyle(
-                                          fontSize: 0.04
-                                              .toWidthPercent(),
-                                          fontWeight: FontWeight.bold,
+                                      child: ElevatedButton(
+                                        onPressed: controller.togglePearl,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.primary,
+                                          foregroundColor: Colors.white,
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 0.012.toHeightPercent(),
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              0.02.toWidthPercent(),
+                                            ),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              controller.showPearl.value
+                                                  ? Icons.visibility_off
+                                                  : Icons.visibility,
+                                              size: 0.045.toWidthPercent(),
+                                            ),
+                                            SizedBox(
+                                              width: 0.02.toWidthPercent(),
+                                            ),
+                                            Text(
+                                              controller.showPearl.value
+                                                  ? 'Hide Explanation'
+                                                  : 'View Explanation',
+                                              style: TextStyle(
+                                                fontSize: 0.04.toWidthPercent(),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
                                     )
                                   : SizedBox(),
                               SizedBox(height: 0.03.toHeightPercent()),
@@ -969,6 +999,7 @@ class MCQScreen extends StatelessWidget {
       ),
     );
   }
+
   PopupMenuItem<String> _buildPopupItem(String val, String text, Color color) {
     return PopupMenuItem(
       value: val,
