@@ -60,14 +60,10 @@ class TestServiceImpl implements TestService {
   @override
   Future<Map<String, dynamic>> getTestPriviewById({required String testId}) {
     return _api.call(
-      url: "$getTestId/$testId",
+      url: "${baseUrl}/api/tests/preview?testId=$testId",
       method: 'GET',
     );
   }
-
-
-
-
 
   @override
   Future<Map<String, dynamic>> fetchQuestion({required String attemptId}) {

@@ -98,7 +98,7 @@ class QTestScreen extends StatelessWidget {
             // ),
             SizedBox(width: 0.03.toWidthPercent()),
             Text(
-              'Custom Module MCQs',
+              'Create custom module',
               style: TextStyle(
                 fontSize: 0.045.toWidthPercent(),
                 fontWeight: FontWeight.bold,

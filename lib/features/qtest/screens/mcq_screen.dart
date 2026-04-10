@@ -1,4 +1,4 @@
-﻿import 'package:codon/features/qtest/controllers/qtest_controller.dart';
+import 'package:codon/features/qtest/controllers/qtest_controller.dart';
 import 'package:codon/features/qtest/models/chapter_test_model.dart';
 import 'package:codon/features/qtest/models/qtest_models.dart';
 import 'package:codon/utills/api_urls.dart';
@@ -631,9 +631,16 @@ class MCQScreen extends StatelessWidget {
                                 _showSubmitConfirmationDialog(
                                   context,
                                   controller,
+                                  codonpass == 'codon',
                                 ); // Call Dialog
                               } else {
-                                controller.nextQuestion();
+                                if (codonpass == 'codon') {
+                                  controller.nextQuestion(
+                                    isFromCodonPass: true,
+                                  );
+                                } else {
+                                  controller.nextQuestion();
+                                }
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -905,6 +912,7 @@ class MCQScreen extends StatelessWidget {
   Future<void> _showSubmitConfirmationDialog(
     BuildContext context,
     QTestController controller,
+    bool isFromCodonPass,
   ) {
     return showDialog(
       context: context,
@@ -971,7 +979,9 @@ class MCQScreen extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            controller.nextQuestion(); // Final Submit Logic
+                            controller.nextQuestion(
+                              isFromCodonPass: isFromCodonPass,
+                            ); // Final Submit Logic
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,

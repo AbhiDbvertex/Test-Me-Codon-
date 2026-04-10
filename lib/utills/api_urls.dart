@@ -17,7 +17,6 @@ const String googleAuthUrl = "$baseUrl/api/users/google";
 
 const String promoCode = "$baseUrl/api/users/promo-apply";
 
-
 const String authMeUrl = "$baseUrl/api/users/auth-me";
 
 // Home
@@ -39,13 +38,14 @@ const String getChapterByTopicUrl = "$baseUrl/api/users/chapters-by-topic";
 const String generateCustomTestUrl = "$baseUrl/api/users/generate-custom-test";
 const String getAllTagsUrl = "$baseUrl/api/users/alltag";
 const String submitQTestUrl = "$baseUrl/api/tests/submit-Qtest";
+const String submitCodonTestUrl = "$baseUrl/api/tests/submit-topic-test";
 const String customTestHistoryUrl = "$baseUrl/api/users/custom-test-history";
 const String getCustomTestDetailsUrl = "$baseUrl/api/users/custom-test";
 const String saveCustomAnswerUrl = "$baseUrl/api/users/save-custom-answer";
 const String submitCustomTestUrl = "$baseUrl/api/users/submit-custom-test";
 // Tests
 const String getTestUrl = "$baseUrl/api/tests";
-const String getTestId="$baseUrl/api/tests/preview";
+const String getTestId = "$baseUrl/api/tests/preview";
 const String getExamTestsUrl = "$baseUrl/api/tests/exam";
 
 // const String getQuestionUrl = "$baseUrl/api/tests/attempt/{ATTEMPT_ID}/question";

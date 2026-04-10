@@ -10,16 +10,23 @@ abstract class QTestService {
   Future<Map<String, dynamic>> getQTest(String qTestId);
   Future<Map<String, dynamic>> createCustomTest({
     required dynamic subjectIds,
-    required dynamic SubsubjectIds,
-    required dynamic chapterId,
+    required dynamic subSubjectIds,
+    required dynamic chapterIds,
+    required dynamic topicIds,
     required dynamic tagIds,
     required String difficulty,
     required String mode,
     required bool discard,
+    required int numberOfQuestions,
     // required id
   });
   Future<Map<String, dynamic>> getTags();
   Future<Map<String, dynamic>> submitQTest({
+    required String qtestId,
+    required String chapterId,
+    required List<Map<String, dynamic>> answers,
+  });
+  Future<Map<String, dynamic>> submitCodonTest({
     required String qtestId,
     required String chapterId,
     required List<Map<String, dynamic>> answers,
@@ -73,27 +80,55 @@ class QTestServiceImpl implements QTestService {
     return _api.call(url: '$getQTestsUrl/$qTestId/mcqs', method: 'GET');
   }
 
+  // @override
+  // Future<Map<String, dynamic>> createCustomTest({
+  //   required dynamic subjectIds,
+  //   required dynamic SubsubjectIds,
+  //   required dynamic chapterId,
+  //   required dynamic tagIds,
+  //   required String difficulty,
+  //   required String mode,
+  //   required bool discard,
+  // }) async {
+  //   return _api.call(
+  //     url: generateCustomTestUrl,
+  //     method: 'POST',
+  //     body: {
+  //       "subjectIds": subjectIds,
+  //       "subSubjectIds": SubsubjectIds,
+  //       "chapterIds": chapterId,
+  //       "tagIds": tagIds,
+  //       "difficulty": difficulty,
+  //       "mode": mode,
+  //       "discard": discard,
+  //     },
+  //   );
+  // }
   @override
   Future<Map<String, dynamic>> createCustomTest({
     required dynamic subjectIds,
-    required dynamic SubsubjectIds,
-    required dynamic chapterId,
+    required dynamic subSubjectIds,
+    required dynamic chapterIds,
+    required dynamic topicIds,
     required dynamic tagIds,
     required String difficulty,
     required String mode,
     required bool discard,
+    required int numberOfQuestions,
   }) async {
     return _api.call(
       url: generateCustomTestUrl,
       method: 'POST',
       body: {
         "subjectIds": subjectIds,
-        "subSubjectIds": SubsubjectIds,
-        "chapterIds": chapterId,
+        "subSubjectIds": subSubjectIds,
+        "chapterIds": chapterIds,
+        "topicIds": topicIds,
         "tagIds": tagIds,
         "difficulty": difficulty,
         "mode": mode,
         "discard": discard,
+        "numberOfQuestions": numberOfQuestions,
       },
     );
   }
@@ -113,6 +148,19 @@ class QTestServiceImpl implements QTestService {
       url: submitQTestUrl,
       method: 'POST',
       body: {"qtestId": qtestId, "chapterId": chapterId, "answers": answers},
+    );
+  }
+
+  @override
+  Future<Map<String, dynamic>> submitCodonTest({
+    required String qtestId,
+    required String chapterId,
+    required List<Map<String, dynamic>> answers,
+  }) async {
+    return _api.call(
+      url: submitCodonTestUrl,
+      method: 'POST',
+      body: {"topicId": qtestId, "answers": answers},
     );
   }
 

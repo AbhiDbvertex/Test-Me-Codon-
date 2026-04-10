@@ -611,8 +611,6 @@ class BookmarkScreen extends StatelessWidget {
           onTap: () {
             // print("Abhi:- bookmark type: ${bookmark.type}");
             if (bookmark.type == 'chapter' && bookmark.chapter != null) {
-              print("Abhi:- bookmark type chapter: ${bookmark.type}");
-              print("Abhi:- bookmark type chapter id: ${bookmark.id}");
               Get.to(
                     () => TopicsScreen(
                   chapterId: bookmark.chapter!.id,
@@ -620,8 +618,6 @@ class BookmarkScreen extends StatelessWidget {
                 ),
               );
             } else if (bookmark.type == 'topic' && bookmark.topic != null) {
-              print("Abhi:- bookmark type topic: ${bookmark.type}");
-              print("Abhi:- bookmark type topic id: ${bookmark.topic!.id}");
               Get.to(
                     () => CodonDetailScreen(
                   topics: [
@@ -635,12 +631,11 @@ class BookmarkScreen extends StatelessWidget {
                     ),
                   ],
                   initialIndex: 0,
+                  chapterId: bookmark.chapterId,
                 ),
               );
             } else if (bookmark.type == 'subSubject' &&
                 bookmark.subSubject != null) {
-              print("Abhi:- bookmark type subSubject: ${bookmark.type}");
-              print("Abhi:- bookmark type subSubject id: ${bookmark.subSubject!.id}");
               Get.to(
                     () => ChaptersScreen(
                   subSubjectId: bookmark.subSubject!.id,
@@ -649,21 +644,14 @@ class BookmarkScreen extends StatelessWidget {
               );
             } else if (bookmark.type == 'mcq' /*&& bookmark.mcq != null*/) {
               // Navigation for MCQ - currently showing topic details or dedicated screen if available
-              print("Abhi:- bookmark type mcq: ${bookmark.type}");
-              print("Abhi:- bookmark type id: ${bookmark.id}");
               Get.to(BookmarkMCQdetailScreen(id: bookmark.mcq?.id,title: bookmark.mcq?.name,)
               );
             }else if (bookmark.type == 'q-test' /*&& bookmark.mcq != null*/) {
-              // Navigation for MCQ - currently showing topic details or dedicated screen if available
-              print("Abhi:- bookmark type mcq: ${bookmark.type}");
-              print("Abhi:- bookmark type id: ${bookmark.id}");
               // Get.to(QTestModuleScreen(chapterId: bookmark.itemId,  chapterName: bookmark.topic?.name ?? "",)
               Get.to(QTestModuleScreen(chapterId: "69946c182438e61fddf8a542",  chapterName: '',   )
               );
             } else if (bookmark.type == 'video' /*&& bookmark.mcq != null*/) {
               // Navigation for MCQ - currently showing topic details or dedicated screen if available
-              print("Abhi:- bookmark type mcq: ${bookmark.type}");
-              print("Abhi:- bookmark type chapterId: ${bookmark.chapterId}");
               // Get.to(QTestModuleScreen(chapterId: bookmark.itemId,  chapterName: bookmark.topic?.name ?? "",)
               Get.to(VideoModulesScreen( chapterId: bookmark.chapterId, bookmarkpass: "bookmarkpass",  )
               );
@@ -761,10 +749,7 @@ class BookmarkScreen extends StatelessWidget {
                             final bool isBookmarked = bookmarkCtrl.isBookmarked(itemId);
                             final String? currentCategory = bookmarkCtrl.getCategory(itemId);
 
-                            // ← Debug line (baad mein hata dena)
-                            print("Bookmark icon → ID: $itemId | Bookmarked: $isBookmarked | Category: '$currentCategory'");
-
-                            Color iconColor = Colors.grey.withOpacity(0.7);
+                            Color iconColor = Colors.grey.withValues(alpha: 0.7);
 
                             if (isBookmarked && currentCategory != null) {
                               final cat = currentCategory.toLowerCase().trim();

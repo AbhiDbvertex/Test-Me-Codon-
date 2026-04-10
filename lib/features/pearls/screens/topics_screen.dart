@@ -276,6 +276,7 @@ class TopicsScreen extends StatelessWidget {
           Get.to(() => CodonDetailScreen(
             topics: topics,
             initialIndex: index,
+            chapterId: chapterId ?? chapter!.id,
           ));
         },
         borderRadius: BorderRadius.circular(15),

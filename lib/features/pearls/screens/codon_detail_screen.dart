@@ -1,13 +1,8 @@
 import 'package:codon/features/auth/controllers/user_controller.dart';
 import 'package:codon/features/pearls/controllers/pearls_controller.dart';
 import 'package:codon/features/pearls/models/get_topic_model.dart';
-import 'package:codon/features/pearls/models/subject_model.dart';
 import 'package:codon/features/pearls/models/topic_details_model.dart';
-import 'package:codon/features/pearls/screens/chapters_screen.dart';
-import 'package:codon/features/pearls/screens/sub_subjects.dart';
-import 'package:codon/features/pearls/screens/topics_screen.dart';
 import 'package:codon/features/qtest/screens/mcq_screen.dart';
-import 'package:codon/features/qtest/screens/qtest_module_screen.dart';
 import 'package:codon/features/subscription/screens/subscription_screen.dart';
 import 'package:codon/utills/app_theme.dart';
 import 'package:codon/utills/screen_size_utils.dart';
@@ -21,11 +16,13 @@ import '../../home/controllers/bookmark_controller.dart';
 class CodonDetailScreen extends StatefulWidget {
   final List<GetTopicModel> topics;
   final int initialIndex;
+  final String chapterId;
 
   const CodonDetailScreen({
     super.key,
     required this.topics,
     required this.initialIndex,
+    required this.chapterId,
   });
 
   @override
@@ -34,18 +31,78 @@ class CodonDetailScreen extends StatefulWidget {
 
 class _CodonDetailScreenState extends State<CodonDetailScreen> {
   late int currentIndex;
+  late List<GetTopicModel> currentTopics;
+  late String currentChapterId;
+  bool isLoadingNextChapter = false;
 
   @override
   void initState() {
     super.initState();
     currentIndex = widget.initialIndex;
+    currentTopics = List.from(widget.topics);
+    currentChapterId = widget.chapterId;
   }
 
-  void _navigateToNext() {
-    if (currentIndex < widget.topics.length - 1) {
+  Future<void> _navigateToNext() async {
+    if (currentIndex < currentTopics.length - 1) {
       setState(() {
         currentIndex++;
       });
+    } else {
+      await _loadNextChapter();
+    }
+  }
+
+  Future<void> _loadNextChapter() async {
+    final controller = Get.find<PearlsController>();
+    final chapters = controller.chaptersList;
+    final currentChapterIndex =
+        chapters.indexWhere((c) => c.id == currentChapterId);
+
+    if (currentChapterIndex != -1 &&
+        currentChapterIndex < chapters.length - 1) {
+      final nextChapter = chapters[currentChapterIndex + 1];
+
+      setState(() {
+        isLoadingNextChapter = true;
+      });
+
+      try {
+        final nextTopics = await controller.getTopics(chapterId: nextChapter.id);
+
+        if (nextTopics.isNotEmpty) {
+          setState(() {
+            currentTopics = nextTopics;
+            currentIndex = 0;
+            currentChapterId = nextChapter.id;
+            isLoadingNextChapter = false;
+          });
+          Get.snackbar(
+            "Next Chapter",
+            "Loaded: ${nextChapter.name}",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: AppColors.primary.withValues(alpha: 0.8),
+            colorText: Colors.white,
+            duration: const Duration(seconds: 2),
+          );
+        } else {
+          setState(() {
+            isLoadingNextChapter = false;
+          });
+          Get.snackbar("Info", "No topics found in the next chapter.");
+        }
+      } catch (e) {
+        setState(() {
+          isLoadingNextChapter = false;
+        });
+        Get.snackbar("Error", "Failed to load next chapter topics.");
+      }
+    } else {
+      Get.snackbar(
+        "End of Subject",
+        "You have reached the end of the last chapter.",
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -59,7 +116,10 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentTopic = widget.topics[currentIndex];
+    if (currentTopics.isEmpty) {
+      return const Scaffold(body: Center(child: Text("No topics available")));
+    }
+    final currentTopic = currentTopics[currentIndex];
     final PearlsController controller = Get.find<PearlsController>();
 
     return SafeArea(
@@ -68,10 +128,12 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
         backgroundColor: const Color(0xFFF8F8F8),
         appBar: DefaultAppBar(title: currentTopic.name),
         bottomNavigationBar: _buildNavigationButtons(),
-        body: FutureBuilder<TopicDetailModel?>(
-          key: ValueKey(currentTopic.id),
-          future: controller.fetchTopicDetails(currentTopic.id),
-          builder: (context, snapshot) {
+        body: isLoadingNextChapter
+            ? const Center(child: CircularProgressIndicator())
+            : FutureBuilder<TopicDetailModel?>(
+                key: ValueKey(currentTopic.id),
+                future: controller.fetchTopicDetails(currentTopic.id),
+                builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -122,7 +184,7 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -138,11 +200,14 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
             isLeft: true,
           ),
           _buildNavButton(
-            onPressed: currentIndex < widget.topics.length - 1
+            onPressed: (currentIndex < currentTopics.length - 1 ||
+                    Get.find<PearlsController>().chaptersList.indexWhere(
+                            (c) => c.id == currentChapterId) <
+                        Get.find<PearlsController>().chaptersList.length - 1)
                 ? _navigateToNext
                 : null,
             icon: Icons.arrow_forward_ios,
-            label: "Next",
+            label: currentIndex < currentTopics.length - 1 ? "Next" : "Next Chapter",
             isLeft: false,
           ),
         ],
@@ -197,7 +262,7 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primary.withOpacity(0.7)],
+          colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.7)],
         ),
       ),
       child: Center(
@@ -230,7 +295,7 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
   //     decoration: BoxDecoration(
   //       color: Colors.white,
   //       borderRadius: BorderRadius.circular(12),
-  //       border: Border.all(color: Colors.grey.withOpacity(0.2)),
+  //       border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
   //     ),
   //     child: Column(
   //       children: [
@@ -286,53 +351,7 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
   //   );
   // }
 
-  Widget _buildHierarchyItem(
-    IconData icon,
-    String label,
-    String value, {
-    VoidCallback? onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.005.toHeightPercent()),
-        child: Row(
-          children: [
-            Icon(icon, size: 0.05.toWidthPercent(), color: AppColors.primary),
-            SizedBox(width: 0.03.toWidthPercent()),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 0.03.toWidthPercent(),
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 0.035.toWidthPercent(),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (onTap != null)
-              Icon(
-                Icons.chevron_right,
-                size: 0.05.toWidthPercent(),
-                color: Colors.grey[400],
-              ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildTopicInfo(TopicDetailModel detail) {
     return Column(
@@ -361,7 +380,7 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
               Color iconColor;
 
               if (!isBookmarked) {
-                iconColor = AppColors.primary.withOpacity(0.5);
+                iconColor = AppColors.primary.withValues(alpha: 0.5);
               } else {
                 switch (category) {
                   case 'mostimportant':
@@ -464,8 +483,6 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
         if (label == "MCQs") {
           final user = Get.find<UserController>().userModel.value;
           if (user?.activeSubscription ?? false) {
-            print("Abhi:- chapterid tap mcq: ${detail.hierarchy.chapterId}");
-            print("Abhi:- topicId tap mcq: ${detail.topic.id}");
             Get.to(
               // () => QTestModuleScreen(
               //   // chapterId: detail.hierarchy.chapterId,
@@ -486,7 +503,7 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),

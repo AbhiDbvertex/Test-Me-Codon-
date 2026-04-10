@@ -348,7 +348,7 @@ class QTestController extends GetxController {
     _startTimer();
   }
 
-  void nextQuestion() {
+  void nextQuestion({bool isFromCodonPass = false}) {
     if (currentQuestionIndex.value < questions.length - 1) {
       if (pageController.hasClients) {
         pageController.nextPage(
@@ -357,7 +357,11 @@ class QTestController extends GetxController {
         );
       }
     } else {
-      submitQuiz();
+      if (isFromCodonPass) {
+        submitQuiz(isFromCodonPass: true);
+      } else {
+        submitQuiz();
+      }
     }
   }
 
@@ -409,7 +413,7 @@ class QTestController extends GetxController {
     }
   }
 
-  Future<void> submitQuiz() async {
+  Future<void> submitQuiz({bool isFromCodonPass = false}) async {
     _questionTimer?.cancel();
     Get.dialog(
       const Center(child: CircularProgressIndicator()),
@@ -417,17 +421,50 @@ class QTestController extends GetxController {
     );
 
     final List<Map<String, dynamic>> answers = questions.map((q) {
-      return {"mcqId": q.id, "selectedIndex": userAnswers[q.id]};
+      return {"mcqId": q.id, "selectedIndex": userAnswers[q.id] ?? -1};
     }).toList();
 
     try {
-      // Assuming all questions belong to the same chapter, we can take chapterId from the first question
-      // or if it's not available, we need to handle it.
       String chapterId = '';
       if (questions.isNotEmpty) {
         chapterId = questions.first.chapterId;
       }
 
+      // ── Codon (topic-test) path ──────────────────────────────────────────
+      if (isFromCodonPass) {
+        final response = await Get.find<QTestService>().submitCodonTest(
+          qtestId: currentQTestId,
+          chapterId: chapterId,
+          answers: answers,
+        );
+
+        Get.back(); // Close loading dialog
+
+        if (response['success'] == true) {
+          final result = response['data'];
+          Get.off(
+            () => QuizResultScreen(
+              targetType: "codon",
+              totalMcqs: result['totalQuestions'] ?? 0,
+              correct: result['correct'] ?? 0,
+              wrong: result['incorrect'] ?? 0,
+              notAttempted: result['notAttempted'] ?? 0,
+              chapterId: currentQTestId,
+              scorePercentage: result['scorePercentage']?.toString(),
+              questions: questions,
+              userAnswers: userAnswers,
+            ),
+          );
+        } else {
+          Get.snackbar(
+            "Error",
+            response['message'] ?? "Failed to submit codon test",
+          );
+        }
+        return; // stop here – do NOT call submitQTest
+      }
+
+      // ── Regular Q-Test path ───────────────────────────────────────────────
       final response = await Get.find<QTestService>().submitQTest(
         qtestId: currentQTestId,
         chapterId: chapterId,
@@ -439,7 +476,7 @@ class QTestController extends GetxController {
       if (response['success'] == true) {
         final result = response['result'];
         Get.off(
-              () => QuizResultScreen(
+          () => QuizResultScreen(
             targetType: "q-test",
             totalMcqs: result['totalQuestions'] ?? 0,
             correct: result['correct'] ?? 0,
