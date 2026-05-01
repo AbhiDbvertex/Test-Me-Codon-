@@ -543,7 +543,7 @@ class MCQScreen extends StatelessWidget {
                                     )
                                   : SizedBox(),
                               SizedBox(height: 0.03.toHeightPercent()),
-                              if (controller.showPearl.value) ...[
+                              if (controller.showPearl.value && (currentQuestion.explanation.images.isNotEmpty || currentQuestion.explanation.text.isNotEmpty)) ...[
                                 SizedBox(height: 0.02.toHeightPercent()),
                                 // Explanation Content
                                 Container(

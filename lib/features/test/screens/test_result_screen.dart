@@ -243,7 +243,10 @@ class TestResultScreen extends StatelessWidget {
                     SizedBox(height: 0.05.toHeightPercent()),
                     _buildReviewSection(controller),
                     SizedBox(height: 0.05.toHeightPercent()),
-                    _buildReviewButton(),
+                    _buildCloseButton(),
+                    SizedBox(height: 0.05.toHeightPercent()),
+                    _buildReviewButton(testId)
+
                   ],
                 ),
               );
@@ -748,7 +751,7 @@ class TestResultScreen extends StatelessWidget {
   //     ],
   //   );
   // }
-  Widget _buildReviewButton() {
+  Widget _buildCloseButton() {
     return Container(
       width: double.infinity,
       height: 60,
@@ -773,6 +776,39 @@ class TestResultScreen extends StatelessWidget {
     );
   }
 }
+Widget _buildReviewButton(String? testId) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          Get.to(
+                () => const RatingScreen(),
+            arguments: {"targetId":  testId ?? "", "targetType": "test"},
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 0.02.toHeightPercent()),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          elevation: 0,
+        ),
+        child: Text(
+          'Leave a Rating',
+          style: TextStyle(
+            fontSize: 0.05.toWidthPercent(),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 
 
 // class TestResultScreen extends StatelessWidget {

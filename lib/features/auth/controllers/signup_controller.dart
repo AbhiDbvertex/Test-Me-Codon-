@@ -1,6 +1,8 @@
 import 'package:codon/features/auth/controllers/user_controller.dart';
+import 'package:codon/features/auth/controllers/complete_profile_controller.dart';
 import 'package:codon/features/auth/models/select_location_model.dart';
 import 'package:codon/features/auth/models/user_model.dart';
+import 'package:codon/features/auth/screens/complete_profile_screen.dart';
 import 'package:codon/features/auth/screens/verify_otp_screen.dart';
 import 'package:codon/features/auth/services/auth_services.dart';
 import 'package:codon/features/auth/services/google_sign_in_service.dart';
@@ -215,8 +217,21 @@ class SignUpController extends GetxController {
           );
         }
 
-        // Navigate to Home
-        Get.offAll(() => HomeScreen());
+        // Navigate — go to CompleteProfileScreen if profile is incomplete
+        final userModel = Get.find<UserController>().userModel.value;
+        final bool profileIncomplete =
+            userModel == null || (userModel.mobile.isEmpty);
+
+        if (profileIncomplete) {
+          if (!Get.isRegistered<CompleteProfileController>()) {
+            Get.put(CompleteProfileController());
+          } else {
+            Get.find<CompleteProfileController>().onInit();
+          }
+          Get.offAll(() => const CompleteProfileScreen());
+        } else {
+          Get.offAll(() => HomeScreen());
+        }
 
         Get.snackbar(
           'Success',

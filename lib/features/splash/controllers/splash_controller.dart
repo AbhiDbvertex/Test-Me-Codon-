@@ -4,6 +4,8 @@ import 'package:codon/features/auth/screens/login_screen.dart';
 import 'package:codon/features/auth/screens/verify_otp_screen.dart';
 import 'package:codon/features/home/screens/home_screen.dart';
 import 'package:codon/features/splash/services/splash_service.dart';
+import 'package:codon/features/auth/controllers/complete_profile_controller.dart';
+import 'package:codon/features/auth/screens/complete_profile_screen.dart';
 import 'package:codon/features/subscription/screens/subscription_screen.dart';
 import 'package:codon/utills/widgets/internel_server_error_screen.dart';
 import 'package:get/get.dart';
@@ -89,11 +91,19 @@ class SplashController extends GetxController {
         final isEmailVerified = user?.isEmailVerified ?? false;
 
         if (isEmailVerified) {
-          // if (user?.subscription.isActive ?? false) {
-          _navigateToHome();
-          // } else {
-          //   _navigateToSubscription();
-          // }
+          final bool profileIncomplete =
+              user?.mobile == null || user!.mobile.isEmpty;
+
+          if (profileIncomplete) {
+            if (!Get.isRegistered<CompleteProfileController>()) {
+              Get.put(CompleteProfileController());
+            } else {
+              Get.find<CompleteProfileController>().onInit();
+            }
+            Get.offAll(() => const CompleteProfileScreen());
+          } else {
+            _navigateToHome();
+          }
         } else {
           _navigateToVerifyEmail(email: user?.email);
         }

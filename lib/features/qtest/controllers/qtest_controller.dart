@@ -444,7 +444,7 @@ class QTestController extends GetxController {
           final result = response['data'];
           Get.off(
             () => QuizResultScreen(
-              targetType: "codon",
+              targetType: "q-test",
               totalMcqs: result['totalQuestions'] ?? 0,
               correct: result['correct'] ?? 0,
               wrong: result['incorrect'] ?? 0,

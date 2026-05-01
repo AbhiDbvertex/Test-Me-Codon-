@@ -22,18 +22,6 @@ class PearlsController extends GetxController {
   var errorMessage = ''.obs;
 
   RxString courseId = ''.obs;
-  final categories = <PearlCategory>[
-    PearlCategory(name: 'All', count: 2526),
-    PearlCategory(name: 'Anatomy', count: 2526),
-    PearlCategory(name: 'Bio', count: 2526),
-    PearlCategory(name: 'Chemistry', count: 2526),
-    PearlCategory(name: 'Math', count: 2526),
-    PearlCategory(name: 'Pharma', count: 2526),
-    PearlCategory(name: 'Community', count: 2526),
-    PearlCategory(name: 'ENT', count: 2526),
-    PearlCategory(name: 'Forensic', count: 2526),
-    PearlCategory(name: 'Math 3', count: 2526),
-  ].obs;
 
   Future<void> getCourse() async {
     try {
@@ -86,26 +74,6 @@ class PearlsController extends GetxController {
       return [];
     }
   }
-
-  // Future<List<ChapterModel>> getChapters(String subSubjectId) async {
-  //   try {
-  //     final response = await Get.find<PearlsService>().getChaptersDetail(
-  //       subSubjectId,
-  //     );
-  //     if (response['success']) {
-  //       print(response['data']);
-  //       return (response['data'] as List)
-  //           .map((e) => TopicModel.fromJson(e))
-  //           .expand((topic) => topic.chapters)
-  //           .toList();
-  //     } else {
-  //       return [];
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //     return [];
-  //   }
-  // }
 
   Future<void> getChapters(String subSubjectId) async {
     try {

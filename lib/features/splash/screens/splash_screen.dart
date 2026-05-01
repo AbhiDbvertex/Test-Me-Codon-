@@ -31,8 +31,8 @@ class SplashScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Image.asset(appLogo, scale: 2.5),
-                Image.asset("assets/pngs/Test-me-logo.png", scale: 2.5),
+                Image.asset(appLogo, scale: 2.5),
+                // Image.asset("assets/pngs/Test-me-logo.png", scale: 2.5),
                 // Image.asset(appLogoText, scale: 3),
                 // Logo Section
                 // Container(

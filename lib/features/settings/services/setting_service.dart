@@ -5,6 +5,7 @@ import 'package:codon/utills/api_urls.dart';
 import 'package:codon/utills/prefs_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
 
 abstract class SettingService {
   Future<Map<String, dynamic>> getAboutUs();
@@ -18,6 +19,8 @@ abstract class SettingService {
   Future<Map<String, dynamic>> getHistory();
 
   Future<Map<String, dynamic>> logout({required String userId});
+
+  Future<Map<String, dynamic>> deleteAccount();
 
   Future<Map<String, dynamic>> updateProfile({
     required String name,
@@ -145,6 +148,7 @@ class SettingServiceImpl implements SettingService {
     }
   }
 
+  @override
   Future<Map<String, dynamic>> logout({required String userId}) async {
     try {
       final token = await PrefsService.getAccessToken();
@@ -176,140 +180,34 @@ class SettingServiceImpl implements SettingService {
     }
   }
 
-  // In your auth_services.dart file
+  @override
+  Future<Map<String, dynamic>> deleteAccount() async {
+    try {
+      final token = await PrefsService.getAccessToken();
+      final response = await http.delete(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        Uri.parse(deleteAccountUrl),
+      );
+      print("Delete Account Response :- ${response.body}");
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return {
+          'success': true,
+          'message': 'Account deleted successfully',
+          'data': data,
+        };
+      } else {
+        return {'success': false, 'message': 'Failed to delete account'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Failed to delete account'};
+    }
+  }
 
-  //   Future<Map<String, dynamic>> updateProfile({
-  //     required String name,
-  //     required String mobile,
-  //     required String address,
-  //     required String countryId,
-  //     required String stateId,
-  //     required String cityId,
-  //     required String collegeId,
-  //     required String classId,
-  //     required String passingYear,
-  //     File? image,
-  //   }) async {
-  //     try {
-  //       final token = await PrefsService.getAccessToken();
-
-  //       var request = http.MultipartRequest('PATCH', Uri.parse(editProfileUrl));
-
-  //       // Add headers
-  //       request.headers.addAll({'Authorization': 'Bearer $token'});
-
-  //       // Add text fields
-  //       request.fields['name'] = name;
-  //       request.fields['mobile'] = mobile;
-  //       request.fields['address'] = address;
-  //       request.fields['countryId'] = countryId;
-  //       request.fields['stateId'] = stateId;
-  //       request.fields['cityId'] = cityId;
-  //       request.fields['collegeId'] = collegeId;
-  //       request.fields['classId'] = classId;
-  //       request.fields['passingYear'] = passingYear;
-
-  //       // Add image if selected
-  //       if (image != null) {
-  //         request.files.add(
-  //           await http.MultipartFile.fromPath('image', image.path),
-  //         );
-  //       }
-
-  //       // Send request
-  //       final streamedResponse = await request.send();
-  //       final response = await http.Response.fromStream(streamedResponse);
-  //       print("Update profile Response ${response.body}");
-  //       if (response.statusCode == 200) {
-  //         return jsonDecode(response.body);
-  //       } else {
-  //         return {'success': false, 'message': 'Update failed: ${response.body}'};
-  //       }
-  //     } catch (e) {
-  //       return {'success': false, 'message': 'Update failed: ${e.toString()}'};
-  //     }
-  //   }
-  // }
-
-  //   Future<Map<String, dynamic>> updateProfile({
-  //     required String name,
-  //     required String mobile,
-  //     required String address,
-  //     required String countryId,
-  //     required String stateId,
-  //     required String cityId,
-  //     required String collegeId,
-  //     required String classId,
-  //     required String passingYear,
-  //     File? image,
-  //   }) async {
-  //     try {
-  //       final token = await PrefsService.getAccessToken();
-  // print("token : $token");
-  // print("Name: $name");
-  // print("mobile: $mobile");
-  // print("address: $address");
-  // print("countryId: $countryId");
-  // print("stateId: $stateId");
-  // print("cityId: $cityId");
-  // print("collegeId: $collegeId");
-  // print("classId: $classId");
-  // print("passingYear: $passingYear");
-  // print("image: $image");
-  // print("Uri: ${Uri.parse(editProfileUrl)}");
-  //
-  //       var request = http.MultipartRequest('PATCH', Uri.parse(baseUrl+editProfileUrl));
-  //
-  //       // Headers
-  //       request.headers.addAll({'Authorization': 'Bearer $token'});
-  //
-  //       // Fields
-  //       request.fields.addAll({
-  //         'name': name,
-  //         'mobile': mobile,
-  //         'address': address,
-  //         // 'countryId': countryId,
-  //         'stateId': stateId,
-  //         'cityId': cityId,
-  //         'collegeId': collegeId,
-  //         //'classId': classId,
-  //         'passingYear': passingYear,
-  //       });
-  //
-  //       // ✅ FIXED IMAGE UPLOAD
-  //       if (image != null) {
-  //         final mimeType = lookupMimeType(image.path);
-  //         final mimeSplit = mimeType!.split('/');
-  //
-  //         request.files.add(
-  //           await http.MultipartFile.fromPath(
-  //             'image',
-  //             image.path,
-  //             contentType: http.MediaType(mimeSplit[0], mimeSplit[1]),
-  //           ),
-  //         );
-  //       }
-  //
-  //       // Send request
-  //       final streamedResponse = await request.send();
-  //       final response = await http.Response.fromStream(streamedResponse);
-  //
-  //       print("Update profile Response ${response.statusCode},${response.body}");
-  //
-  //       if (response.statusCode == 200) {
-  //         return jsonDecode(response.body);
-  //       } else {
-  //         return {
-  //           'success': false,
-  //           'message': jsonDecode(response.body)['message'] ?? 'Update failed',
-  //         };
-  //       }
-  //     } catch (e) {
-  //       print("Error ;$e");
-  //       return {'success': false, 'message': 'Update failed: ${e.toString()}'};
-  //     }
-  //   }
-
+  @override
   Future<Map<String, dynamic>> updateProfile({
     required String name,
     required String mobile,
@@ -342,7 +240,7 @@ class SettingServiceImpl implements SettingService {
         'address': address,
         'stateId': stateId,
         'cityId': cityId,
-        // 'collegeId': collegeId, //  ️ Agar ye MongoDB ID nahi hai toh backend crash ho sakta hai
+        'collegeName': collegeId, // Using collegeName as per register logic
         'passingYear': passingYear,
       });
 
@@ -355,7 +253,7 @@ class SettingServiceImpl implements SettingService {
           await http.MultipartFile.fromPath(
             'image',
             image.path,
-            contentType: http.MediaType(mimeSplit[0], mimeSplit[1]),
+            contentType: MediaType(mimeSplit[0], mimeSplit[1]),
           ),
         );
       }

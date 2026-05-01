@@ -80,6 +80,8 @@ import 'package:codon/features/auth/controllers/verify_otp_controller.dart';
 import 'package:codon/features/auth/models/user_model.dart';
 import 'package:codon/features/auth/services/auth_services.dart';
 import 'package:codon/features/auth/services/google_sign_in_service.dart';
+import 'package:codon/features/auth/screens/complete_profile_screen.dart';
+import 'package:codon/features/auth/controllers/complete_profile_controller.dart';
 import 'package:codon/features/home/screens/home_screen.dart';
 import 'package:codon/features/subscription/screens/subscription_screen.dart';
 import 'package:codon/utills/base_api_client.dart';
@@ -247,13 +249,23 @@ class LoginController extends GetxController {
           );
         }
 
-        // Navigate
-        // if (Get.find<UserController>().userModel.value?.subscription.isActive ??
-        //     false) {
-        Get.offAll(() => HomeScreen());
-        // } else {
-        //   Get.offAll(() => const SubscriptionScreen());
-        // }
+        // Navigate — go to CompleteProfileScreen if profile is incomplete
+        final userModel = Get.find<UserController>().userModel.value;
+        final bool profileIncomplete =
+            userModel == null || (userModel.mobile.isEmpty);
+
+        if (profileIncomplete) {
+          // Ensure controller is initialised with latest user data
+          if (!Get.isRegistered<CompleteProfileController>()) {
+            Get.put(CompleteProfileController());
+          } else {
+            // Re-load user data into existing controller
+            Get.find<CompleteProfileController>().onInit();
+          }
+          Get.offAll(() => const CompleteProfileScreen());
+        } else {
+          Get.offAll(() => HomeScreen());
+        }
         Get.snackbar(
           'Success',
           'Signed in with Google successfully',

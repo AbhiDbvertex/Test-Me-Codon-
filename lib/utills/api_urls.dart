@@ -6,7 +6,7 @@ const String baseUrl = "https://api.codonneetug.com";
 const String emailLoginUrl = "$baseUrl/api/users/login";
 const String registerUrl = "$baseUrl/api/users/register";
 const String forgotPasswordUrl = "$baseUrl/api/users/forgot-password";
-
+const String deleteAccountUrl = "$baseUrl/api/users/delete-account";
 const String resetPasswordUrl = "$baseUrl/api/users/change-password";
 const String logoutUrl = "$baseUrl/api/users/logout";
 const String verifyUserUrl = "$baseUrl/api/users/verify-user";

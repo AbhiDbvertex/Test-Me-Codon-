@@ -18,6 +18,7 @@ import 'package:codon/features/splash/services/splash_service.dart';
 import 'package:codon/features/subscription/services/subscription_service.dart';
 import 'package:codon/features/subscription/controllers/subscription_controller.dart';
 import 'package:codon/features/videos/controllers/videos_controller.dart';
+import 'package:codon/features/auth/controllers/complete_profile_controller.dart';
 import 'package:codon/features/auth/controllers/login_controller.dart';
 import 'package:codon/features/auth/controllers/reset_password_controller.dart';
 import 'package:codon/features/auth/controllers/signup_controller.dart';
@@ -58,6 +59,7 @@ class InitialBinding extends Bindings {
     Get.lazyPut(() => BookmarkController(), fenix: true);
     Get.lazyPut(() => ForgotPasswordController(), fenix: true);
     Get.lazyPut(() => VerifyOtpController(), fenix: true);
+    Get.lazyPut(() => CompleteProfileController(), fenix: true);
     Get.lazyPut(() => ResetPasswordController(), fenix: true);
     Get.lazyPut(() => HomeController(), fenix: true);
     Get.lazyPut(() => FacultiesController(), fenix: true);

@@ -46,11 +46,11 @@ class LoginScreen extends StatelessWidget {
                 // SizedBox(height: 0.07.toHeightPercent()),
 
                 // // Logo Circle
-                // Image.asset(appLogo, scale: 3),
-                // App Name
-                Image.asset("assets/pngs/Test-me-logo.png", scale: 2.8),
-                // Image.asset(appLogoText, scale: 2.8),
+                Image.asset(appLogo, scale: 3),
 
+                // App Name
+                // Image.asset("assets/pngs/Test-me-logo.png", scale: 2.8),
+                // Image.asset(appLogoText, scale: 2.8),
                 SizedBox(height: 0.02.toHeightPercent()),
 
                 // LogIn Header
@@ -379,38 +379,41 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
 
-                SizedBox(height: 0.03.toHeightPercent()),
+                if (!GetPlatform.isIOS) ...[
+                  SizedBox(height: 0.03.toHeightPercent()),
 
-                // Or
-                Text(
-                  'Or',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 0.043.toWidthPercent(),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                SizedBox(height: 0.03.toHeightPercent()),
-
-                // Google Sign In Button
-                InkWell(
-                  onTap: controller.googleSignIn,
-                  child: SvgPicture.asset(
-                    googleIcon,
-                    width: 0.13.toWidthPercent(),
-                    height: 0.06.toHeightPercent(),
-                    placeholderBuilder: (BuildContext context) => CircleAvatar(
-                      radius: 0.06.toWidthPercent(),
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.g_mobiledata,
-                        size: 0.1.toWidthPercent(),
-                        color: Colors.blue,
-                      ),
+                  // Or
+                  Text(
+                    'Or',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 0.043.toWidthPercent(),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
+
+                  SizedBox(height: 0.03.toHeightPercent()),
+
+                  // Google Sign In Button
+                  InkWell(
+                    onTap: controller.googleSignIn,
+                    child: SvgPicture.asset(
+                      googleIcon,
+                      width: 0.13.toWidthPercent(),
+                      height: 0.06.toHeightPercent(),
+                      placeholderBuilder: (BuildContext context) =>
+                          CircleAvatar(
+                            radius: 0.06.toWidthPercent(),
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              Icons.g_mobiledata,
+                              size: 0.1.toWidthPercent(),
+                              color: Colors.blue,
+                            ),
+                          ),
+                    ),
+                  ),
+                ],
 
                 SizedBox(height: 0.05.toHeightPercent()),
               ],

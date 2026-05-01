@@ -10,6 +10,7 @@ import 'package:codon/features/settings/screens/terms_condition_screen.dart';
 import 'package:codon/features/settings/services/setting_service.dart';
 import 'package:codon/utills/prefs_service.dart';
 import 'package:codon/features/auth/controllers/user_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 
@@ -23,6 +24,8 @@ import '../screens/report_privacy_screen.dart';
 
 class SettingsController extends GetxController {
   final UserController _userController = Get.find<UserController>();
+  final RxBool isLoading = false.obs;
+
   void navigateTo(String page) {
     if (page == 'Edit Profile') {
       Get.to(() => EditProfileScreen());
@@ -38,26 +41,17 @@ class SettingsController extends GetxController {
       Get.to(() => const FaqScreen());
     } else if (page == 'Refund & Cancellation Policy') {
       Get.to(() => const RefundAndCancellationPolicyScreen());
-
-    }else if(page=="Connect with us"){
+    } else if (page == "Connect with us") {
       Get.to(() => const ConnectWithUsScreen());
-    }
-
-   else if (page == 'Our Plans') {
+    } else if (page == 'Our Plans') {
       Get.to(() => const SubscriptionScreen());
-    }
-    else if (page == 'Rate Us') {
+    } else if (page == 'Rate Us') {
       Get.to(() => const RateUsScreen());
-    }
-    else if (page == 'Share Us') {
+    } else if (page == 'Share Us') {
       Get.to(() => const ShareUsScreen());
-    }
-
-    else if (page == 'Report Privacy') {
+    } else if (page == 'Report Privacy') {
       Get.to(() => const ReportPrivacyScreen());
-    }
-
-    else {
+    } else {
       Get.snackbar(
         'Navigation',
         'Navigating to $page',
@@ -65,7 +59,9 @@ class SettingsController extends GetxController {
       );
     }
   }
+
   final RxBool isOtherExpanded = false.obs;
+
   Future<dynamic> getAboutUs() async {
     try {
       final response = await Get.find<SettingService>().getAboutUs();
@@ -140,6 +136,37 @@ class SettingsController extends GetxController {
               'Logout Failed.',
               snackPosition: SnackPosition.TOP,
             );
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    isLoading.value = true;
+    try {
+      final response = await Get.find<SettingService>().deleteAccount();
+      if (response['success']) {
+        await PrefsService.clearAllData();
+        BaseApiClient.accessToken = null;
+        Get.offAll(() => LoginScreen());
+        Get.snackbar(
+          'Success',
+          'Account deleted successfully',
+          snackPosition: SnackPosition.TOP,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          response['message'] ?? 'Failed to delete account',
+          snackPosition: SnackPosition.TOP,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Something went wrong',
+        snackPosition: SnackPosition.TOP,
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 }

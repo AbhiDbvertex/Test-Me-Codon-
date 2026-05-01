@@ -317,36 +317,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ],
               ),
 
-              SizedBox(height: 0.02.toHeightPercent()),
+              if (!GetPlatform.isIOS) ...[
+                SizedBox(height: 0.02.toHeightPercent()),
 
-              // const Text(
-              //   'Or',
-              //   style: TextStyle(
-              //     color: Colors.black,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
+                const Text(
+                  'Or',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
 
-              // SizedBox(height: 0.02.toHeightPercent()),
+                SizedBox(height: 0.02.toHeightPercent()),
 
-              // // Google Sign In
-              // InkWell(
-              //   onTap: controller.googleSignIn,
-              //   child: SvgPicture.asset(
-              //     googleIcon,
-              //     width: 0.13.toWidthPercent(),
-              //     height: 0.06.toHeightPercent(),
-              //     placeholderBuilder: (BuildContext context) => CircleAvatar(
-              //       radius: 0.06.toWidthPercent(),
-              //       backgroundColor: Colors.white,
-              //       child: Icon(
-              //         Icons.g_mobiledata,
-              //         size: 0.1.toWidthPercent(),
-              //         color: Colors.blue,
-              //       ),
-              //     ),
-              //   ),
-              // ),
+                // Google Sign In
+                InkWell(
+                  onTap: controller.googleSignIn,
+                  child: SvgPicture.asset(
+                    googleIcon,
+                    width: 0.13.toWidthPercent(),
+                    height: 0.06.toHeightPercent(),
+                    placeholderBuilder:
+                        (BuildContext context) => CircleAvatar(
+                          radius: 0.06.toWidthPercent(),
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            Icons.g_mobiledata,
+                            size: 0.1.toWidthPercent(),
+                            color: Colors.blue,
+                          ),
+                        ),
+                  ),
+                ),
+              ],
               SizedBox(height: 0.05.toHeightPercent()),
             ],
           ),
