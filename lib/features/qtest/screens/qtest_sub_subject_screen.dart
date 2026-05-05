@@ -31,7 +31,7 @@ class QTestSubSubjectScreen extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No sub-subjects found'));
           } else {
-            final subSubjects = snapshot.data!;
+            final subSubjects = snapshot.data!.reversed.toList();
             return ListView.builder(
               padding: EdgeInsets.all(0.04.toWidthPercent()),
               itemCount: subSubjects.length,

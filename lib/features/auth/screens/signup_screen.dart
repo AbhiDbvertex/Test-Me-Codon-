@@ -100,11 +100,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               SizedBox(height: 0.02.toHeightPercent()),
 
-              // TextField(
-              //   controller: controller.addressController,
-              //   style: TextStyle(fontSize: 0.04.toWidthPercent()),
-              //   decoration: buildInputDecoration('Enter Your Address'),
-              // ),
+              TextField(
+                controller: controller.addressController,
+                style: TextStyle(fontSize: 0.04.toWidthPercent()),
+                decoration: buildInputDecoration('Enter Your Address'),
+              ),
               SizedBox(height: 0.02.toHeightPercent()),
 
               // Dropdowns
@@ -337,16 +337,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     googleIcon,
                     width: 0.13.toWidthPercent(),
                     height: 0.06.toHeightPercent(),
-                    placeholderBuilder:
-                        (BuildContext context) => CircleAvatar(
-                          radius: 0.06.toWidthPercent(),
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.g_mobiledata,
-                            size: 0.1.toWidthPercent(),
-                            color: Colors.blue,
-                          ),
-                        ),
+                    placeholderBuilder: (BuildContext context) => CircleAvatar(
+                      radius: 0.06.toWidthPercent(),
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.g_mobiledata,
+                        size: 0.1.toWidthPercent(),
+                        color: Colors.blue,
+                      ),
+                    ),
                   ),
                 ),
               ],

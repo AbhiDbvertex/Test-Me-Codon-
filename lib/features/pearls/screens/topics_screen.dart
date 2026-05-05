@@ -273,11 +273,13 @@ class TopicsScreen extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          Get.to(() => CodonDetailScreen(
-            topics: topics,
-            initialIndex: index,
-            chapterId: chapterId ?? chapter!.id,
-          ));
+          Get.to(
+            () => CodonDetailScreen(
+              topics: topics,
+              initialIndex: index,
+              chapterId: chapterId ?? chapter!.id,
+            ),
+          );
         },
         borderRadius: BorderRadius.circular(15),
         child: Padding(
@@ -310,12 +312,15 @@ class TopicsScreen extends StatelessWidget {
               children: [
                 PopupMenuButton<String>(
                   icon: Obx(() {
+                    final bookmarkCtrl = Get.find<BookmarkController>();
+                    final isBookmarked = bookmarkCtrl.isBookmarked(topic.id);
+                    final category = bookmarkCtrl.getCategory(topic.id);
                     Color iconColor;
 
-                    if (!topic.isBookMarked.value) {
+                    if (!isBookmarked) {
                       iconColor = AppColors.primary.withOpacity(0.5);
                     } else {
-                      switch (topic.bookMarkedCategory.value) {
+                      switch (category) {
                         case 'mostimportant':
                           iconColor = Colors.red;
                           break;
@@ -331,9 +336,7 @@ class TopicsScreen extends StatelessWidget {
                     }
 
                     return Icon(
-                      topic.isBookMarked.value
-                          ? Icons.bookmark
-                          : Icons.bookmark_border,
+                      isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                       color: iconColor,
                       size: 0.06.toWidthPercent(),
                     );
@@ -344,17 +347,23 @@ class TopicsScreen extends StatelessWidget {
                       itemId: topic.id,
                       category: value,
                     );
-
-                    // UI update locally
-                    topic.isBookMarked.value = true;
-                    topic.bookMarkedCategory.value = value;
                   },
                   itemBuilder: (context) => [
                     _buildPopupItem(
-                        'mostimportant', 'Most Important', Colors.red),
+                      'mostimportant',
+                      'Most Important',
+                      Colors.red,
+                    ),
                     _buildPopupItem(
-                        'veryimportant', 'Very Important', Colors.orange),
-                    _buildPopupItem('important', 'Important                                                                                          ', Colors.blue),
+                      'veryimportant',
+                      'Very Important',
+                      Colors.orange,
+                    ),
+                    _buildPopupItem(
+                      'important',
+                      'Important                                                                                          ',
+                      Colors.blue,
+                    ),
                     _buildPopupItem('removed', 'remove', Colors.grey),
                   ],
                 ),
@@ -371,8 +380,7 @@ class TopicsScreen extends StatelessWidget {
     );
   }
 
-  PopupMenuItem<String> _buildPopupItem(
-      String val, String text, Color color) {
+  PopupMenuItem<String> _buildPopupItem(String val, String text, Color color) {
     return PopupMenuItem(
       value: val,
       child: Row(

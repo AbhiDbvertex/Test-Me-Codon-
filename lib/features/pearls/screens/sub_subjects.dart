@@ -34,7 +34,7 @@ class SubSubjectsScreen extends StatelessWidget {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 if (snapshot.hasData) {
-                  final subSubjects = snapshot.data!;
+                  final subSubjects = snapshot.data!.reversed.toList();
                   if (subSubjects.isEmpty) {
                     return const Center(
                       child: Text(

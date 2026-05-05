@@ -75,6 +75,14 @@ class CompleteProfileScreen extends StatelessWidget {
                       maxLength: 10,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
+                    SizedBox(height: 0.018.toHeightPercent()),
+
+                    // Address
+                    _buildTextField(
+                      controller: controller.addressCtrl,
+                      hint: 'Address',
+                      icon: Icons.location_on_outlined,
+                    ),
                     SizedBox(height: 0.03.toHeightPercent()),
 
                     _sectionLabel('Location'),

@@ -15,6 +15,7 @@ class CompleteProfileController extends GetxController {
   late TextEditingController emailCtrl;
   late TextEditingController mobileCtrl;
   late TextEditingController collegeCtrl;
+  late TextEditingController addressCtrl;
 
   // Dropdown values
   final selectedState = RxnString();
@@ -49,6 +50,7 @@ class CompleteProfileController extends GetxController {
     emailCtrl = TextEditingController();
     mobileCtrl = TextEditingController();
     collegeCtrl = TextEditingController();
+    addressCtrl = TextEditingController();
 
     _loadUserData();
     getStates();
@@ -63,6 +65,7 @@ class CompleteProfileController extends GetxController {
     emailCtrl.text = user.email.isNotEmpty ? user.email : '';
     mobileCtrl.text = user.mobile.isNotEmpty ? user.mobile : '';
     collegeCtrl.text = user.college?.name ?? '';
+    addressCtrl.text = user.address ?? '';
     profileImageUrl.value = user.profileImage ?? '';
 
     if (user.state?.id != null && user.state!.id.isNotEmpty) {
@@ -140,6 +143,11 @@ class CompleteProfileController extends GetxController {
           snackPosition: SnackPosition.TOP);
       return false;
     }
+    if (addressCtrl.text.trim().isEmpty) {
+      Get.snackbar('Error', 'Please enter your address',
+          snackPosition: SnackPosition.TOP);
+      return false;
+    }
     if (mobileCtrl.text.trim().length != 10) {
       Get.snackbar('Error', 'Please enter a valid 10-digit mobile number',
           snackPosition: SnackPosition.TOP);
@@ -166,7 +174,7 @@ class CompleteProfileController extends GetxController {
       final res = await _settingService.updateProfile(
         name: nameCtrl.text.trim(),
         mobile: mobileCtrl.text.trim(),
-        address: '',
+        address: addressCtrl.text.trim(),
         countryId: '6967b961d48b7381354d28eb',
         stateId: selectedState.value ?? '',
         cityId: selectedCity.value ?? '',
@@ -215,6 +223,7 @@ class CompleteProfileController extends GetxController {
     emailCtrl.dispose();
     mobileCtrl.dispose();
     collegeCtrl.dispose();
+    addressCtrl.dispose();
     super.onClose();
   }
 }

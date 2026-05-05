@@ -530,6 +530,7 @@
 // }
 
 import 'dart:convert';
+import 'package:codon/features/home/screens/home_screen.dart';
 import 'package:codon/features/subscription/Models/plan_model.dart';
 import 'package:codon/features/subscription/services/subscription_service.dart';
 import 'package:codon/features/auth/controllers/user_controller.dart';
@@ -542,7 +543,7 @@ import '../../../utills/prefs_service.dart';
 
 class SubscriptionController extends GetxController {
   final SubscriptionService _subscriptionService =
-  Get.find<SubscriptionService>();
+      Get.find<SubscriptionService>();
   final UserController _userController = Get.find<UserController>();
 
   late Razorpay _razorpay;
@@ -555,12 +556,14 @@ class SubscriptionController extends GetxController {
   final discountedPrice = RxnString();
   final isPromoApplied = false.obs;
 
-// Naya add karo (sabse important)
+  // Naya add karo (sabse important)
   final selectedPricing = Rxn<Pricing>();
-  final selectedMonth = Rxn<Pricing>();       // ← yeh current active pricing object hai
-  final selectedPlanId = Rxn<PlanModel>();       // ← yeh current active pricing object hai
+  final selectedMonth =
+      Rxn<Pricing>(); // ← yeh current active pricing object hai
+  final selectedPlanId =
+      Rxn<PlanModel>(); // ← yeh current active pricing object hai
 
-// Optional: real discounted amount number mein rakhne ke liye (double)
+  // Optional: real discounted amount number mein rakhne ke liye (double)
   final currentPriceAfterDiscount = 0.0.obs;
 
   @override
@@ -636,7 +639,7 @@ class SubscriptionController extends GetxController {
         // Refresh profile to reflect active subscription
         await _userController.refreshUserProfile();
         // Optionally navigate to home or refresh profile
-        Get.offAllNamed('/home');
+        Get.offAll(() => HomeScreen());
       } else {
         Get.snackbar(
           'Verification Failed',
@@ -662,7 +665,8 @@ class SubscriptionController extends GetxController {
     final plan = plans[index];
 
     if (plan.pricing.isNotEmpty) {
-      selectedPricing.value = plan.pricing.first;   // ya user ne koi dropdown se choose kiya to usko
+      selectedPricing.value =
+          plan.pricing.first; // ya user ne koi dropdown se choose kiya to usko
       currentPriceAfterDiscount.value = plan.pricing.first.price;
       resetPromoCode(); // har baar naya plan → promo reset
     }
@@ -670,21 +674,25 @@ class SubscriptionController extends GetxController {
 
   Future<void> applyPromoCode({
     required String planId,
-    required double originalPrice,          // ← double maango
-    required int selectedMonths,        // default 1, baad mein dynamic kar sakte ho
+    required double originalPrice, // ← double maango
+    required int selectedMonths, // default 1, baad mein dynamic kar sakte ho
   }) async {
     if (promoCodeController.text.trim().isEmpty) {
       Get.snackbar('Error', 'Please enter promo code');
       return;
     }
 
-    print("Abhi:- print planId: $planId, originalPrice:$originalPrice, selectedmonth: $selectedMonths}");
+    print(
+      "Abhi:- print planId: $planId, originalPrice:$originalPrice, selectedmonth: $selectedMonths}",
+    );
 
     isLoading.value = true;
 
     try {
       final response = await http.post(
-        Uri.parse(promoCode),   // ← tumhara real endpoint daalo (abhi 'promoCode' variable galat tha)
+        Uri.parse(
+          promoCode,
+        ), // ← tumhara real endpoint daalo (abhi 'promoCode' variable galat tha)
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${await PrefsService.getAccessToken()}',
@@ -692,7 +700,7 @@ class SubscriptionController extends GetxController {
         body: jsonEncode({
           "promoCode": promoCodeController.text.trim(),
           "planId": planId,
-          "selectedMonths": selectedMonths,   // ← yeh dynamic bhej rahe ho
+          "selectedMonths": selectedMonths, // ← yeh dynamic bhej rahe ho
         }),
       );
 
@@ -707,8 +715,10 @@ class SubscriptionController extends GetxController {
           final promoData = data['data'];
 
           // Important: String ko double mein convert karo
-          final double finalAmount = (promoData['finalAmount'] as num?)?.toDouble() ?? originalPrice;
-          final double discountAmount = (promoData['discountAmount'] as num?)?.toDouble() ?? 0;
+          final double finalAmount =
+              (promoData['finalAmount'] as num?)?.toDouble() ?? originalPrice;
+          final double discountAmount =
+              (promoData['discountAmount'] as num?)?.toDouble() ?? 0;
 
           // Pricing object update karo
           if (selectedPricing.value != null) {
@@ -720,17 +730,23 @@ class SubscriptionController extends GetxController {
               extraMonths: old.extraMonths,
               totalMonths: old.totalMonths,
               days: old.days,
-              price: finalAmount,                      // ← yeh sabse zaroori
+              price: finalAmount, // ← yeh sabse zaroori
               perDay: old.days > 0 ? finalAmount / old.days : 0,
               planLabel: old.planLabel,
-              discountLabel: promoData['discountLabel'] ?? old.discountLabel ?? "Save ₹${discountAmount.toStringAsFixed(0)}",
+              discountLabel:
+                  promoData['discountLabel'] ??
+                  old.discountLabel ??
+                  "Save ₹${discountAmount.toStringAsFixed(0)}",
             );
             //json is format for sharing data server to app
             currentPriceAfterDiscount.value = finalAmount;
             discountedPrice.value = 'INR ${finalAmount.toStringAsFixed(0)}';
             isPromoApplied.value = true;
 
-            Get.snackbar('Success', 'Promo applied! You save ₹${discountAmount.toStringAsFixed(0)}');
+            Get.snackbar(
+              'Success',
+              'Promo applied! You save ₹${discountAmount.toStringAsFixed(0)}',
+            );
           }
         } else {
           Get.snackbar('Failed', data['message'] ?? 'Invalid promo code');
@@ -870,7 +886,10 @@ class SubscriptionController extends GetxController {
       );
 
       if (orderResponse['success'] != true) {
-        Get.snackbar('Error', orderResponse['message'] ?? 'Failed to create order');
+        Get.snackbar(
+          'Error',
+          orderResponse['message'] ?? 'Failed to create order',
+        );
         return;
       }
 
@@ -907,7 +926,8 @@ class SubscriptionController extends GetxController {
 
       if (backendAmount != amountInPaise) {
         print(
-            "Amount mismatch! Frontend: $amountInPaise, Backend: $backendAmount");
+          "Amount mismatch! Frontend: $amountInPaise, Backend: $backendAmount",
+        );
       }
 
       var options = {

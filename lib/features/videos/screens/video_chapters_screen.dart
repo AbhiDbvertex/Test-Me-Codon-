@@ -44,7 +44,10 @@ class VideoChaptersScreen extends StatelessWidget {
               }
 
               final chapters = controller.chaptersList;
-              if (chapters.isEmpty) {
+              final fillterChapters = chapters
+                  .where((p0) => p0.tortalVideoCount > 0)
+                  .toList();
+              if (fillterChapters.isEmpty) {
                 return const Center(
                   child: Text(
                     "No Chapters Available",
@@ -61,9 +64,9 @@ class VideoChaptersScreen extends StatelessWidget {
                   horizontal: 0.04.toWidthPercent(),
                   vertical: 0.02.toHeightPercent(),
                 ),
-                itemCount: chapters.length,
+                itemCount: fillterChapters.length,
                 itemBuilder: (context, index) {
-                  final chapter = chapters[index];
+                  final chapter = fillterChapters[index];
                   return _buildChapterCard(chapter);
                 },
               );
@@ -140,56 +143,56 @@ class VideoChaptersScreen extends StatelessWidget {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    PopupMenuButton<String>(
-                      icon: Obx(() {
-                        Color iconColor;
-                        if (!chapter.isBookMarked.value) {
-                          iconColor = AppColors.primary.withOpacity(0.5);
-                        } else {
-                          switch (chapter.bookMarkedCategory.value) {
-                            case 'mostimportant':
-                              iconColor = Colors.red;
-                              break;
-                            case 'veryimportant':
-                              iconColor = Colors.orange;
-                              break;
-                            case 'important':
-                              iconColor = Colors.blue;
-                              break;
-                            default:
-                              iconColor = AppColors.primary;
-                          }
-                        }
-                        return Icon(
-                          chapter.isBookMarked.value
-                              ? Icons.bookmark
-                              : Icons.bookmark_border,
-                          color: iconColor,
-                          size: 0.06.toWidthPercent(),
-                        );
-                      }),
-                      onSelected: (value) {
-                        Get.find<BookmarkController>().toggleBookmark(
-                          type: "video",
-                          itemId: chapter.id,
-                          category: value,
-                        );
-                      },
-                      itemBuilder: (context) => [
-                        _buildPopupItem(
-                          'mostimportant',
-                          'Most Important',
-                          Colors.red,
-                        ),
-                        _buildPopupItem(
-                          'veryimportant',
-                          'Very Important',
-                          Colors.orange,
-                        ),
-                        _buildPopupItem('important', 'Important', Colors.blue),
-                        _buildPopupItem('removed', 'remove', Colors.grey),
-                      ],
-                    ),
+                    // PopupMenuButton<String>(
+                    //   icon: Obx(() {
+                    //     Color iconColor;
+                    //     if (!chapter.isBookMarked.value) {
+                    //       iconColor = AppColors.primary.withOpacity(0.5);
+                    //     } else {
+                    //       switch (chapter.bookMarkedCategory.value) {
+                    //         case 'mostimportant':
+                    //           iconColor = Colors.red;
+                    //           break;
+                    //         case 'veryimportant':
+                    //           iconColor = Colors.orange;
+                    //           break;
+                    //         case 'important':
+                    //           iconColor = Colors.blue;
+                    //           break;
+                    //         default:
+                    //           iconColor = AppColors.primary;
+                    //       }
+                    //     }
+                    //     return Icon(
+                    //       chapter.isBookMarked.value
+                    //           ? Icons.bookmark
+                    //           : Icons.bookmark_border,
+                    //       color: iconColor,
+                    //       size: 0.06.toWidthPercent(),
+                    //     );
+                    //   }),
+                    //   onSelected: (value) {
+                    //     Get.find<BookmarkController>().toggleBookmark(
+                    //       type: "video",
+                    //       itemId: chapter.id,
+                    //       category: value,
+                    //     );
+                    //   },
+                    //   itemBuilder: (context) => [
+                    //     _buildPopupItem(
+                    //       'mostimportant',
+                    //       'Most Important',
+                    //       Colors.red,
+                    //     ),
+                    //     _buildPopupItem(
+                    //       'veryimportant',
+                    //       'Very Important',
+                    //       Colors.orange,
+                    //     ),
+                    //     _buildPopupItem('important', 'Important', Colors.blue),
+                    //     _buildPopupItem('removed', 'remove', Colors.grey),
+                    //   ],
+                    // ),
                     const Icon(
                       Icons.arrow_forward,
                       color: Color(0xFFE0E0E0),

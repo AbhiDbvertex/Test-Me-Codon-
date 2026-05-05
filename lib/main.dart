@@ -2,6 +2,7 @@ import 'package:codon/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:screen_protector/screen_protector.dart';
 import 'features/home/screens/home_screen.dart';
 import 'features/splash/screens/splash_screen.dart';
 import 'utills/app_theme.dart';
@@ -9,6 +10,7 @@ import 'utills/initial_bindings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ScreenProtector.preventScreenshotOn();
   // await Firebase.initializeApp();
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(

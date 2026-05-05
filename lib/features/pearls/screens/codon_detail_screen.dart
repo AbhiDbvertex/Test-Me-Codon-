@@ -56,8 +56,9 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
   Future<void> _loadNextChapter() async {
     final controller = Get.find<PearlsController>();
     final chapters = controller.chaptersList;
-    final currentChapterIndex =
-        chapters.indexWhere((c) => c.id == currentChapterId);
+    final currentChapterIndex = chapters.indexWhere(
+      (c) => c.id == currentChapterId,
+    );
 
     if (currentChapterIndex != -1 &&
         currentChapterIndex < chapters.length - 1) {
@@ -68,7 +69,9 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
       });
 
       try {
-        final nextTopics = await controller.getTopics(chapterId: nextChapter.id);
+        final nextTopics = await controller.getTopics(
+          chapterId: nextChapter.id,
+        );
 
         if (nextTopics.isNotEmpty) {
           setState(() {
@@ -134,44 +137,44 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
                 key: ValueKey(currentTopic.id),
                 future: controller.fetchTopicDetails(currentTopic.id),
                 builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError || !snapshot.hasData) {
-              return Center(
-                child: Text(
-                  'Failed to load details',
-                  style: TextStyle(fontSize: 0.04.toWidthPercent()),
-                ),
-              );
-            }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return Center(
+                      child: Text(
+                        'Failed to load details',
+                        style: TextStyle(fontSize: 0.04.toWidthPercent()),
+                      ),
+                    );
+                  }
 
-            final detail = snapshot.data!;
+                  final detail = snapshot.data!;
 
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(detail),
-                  Padding(
-                    padding: EdgeInsets.all(0.04.toWidthPercent()),
+                  return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // _buildHierarchy(detail),
-                        SizedBox(height: 0.02.toHeightPercent()),
-                        _buildTopicInfo(detail),
-                        SizedBox(height: 0.03.toHeightPercent()),
-                        _buildStatsGrid(detail),
-                        SizedBox(height: 0.02.toHeightPercent()),
+                        _buildHeader(detail),
+                        Padding(
+                          padding: EdgeInsets.all(0.04.toWidthPercent()),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // _buildHierarchy(detail),
+                              SizedBox(height: 0.02.toHeightPercent()),
+                              _buildTopicInfo(detail),
+                              SizedBox(height: 0.03.toHeightPercent()),
+                              _buildStatsGrid(detail),
+                              SizedBox(height: 0.02.toHeightPercent()),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
     );
   }
@@ -200,14 +203,18 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
             isLeft: true,
           ),
           _buildNavButton(
-            onPressed: (currentIndex < currentTopics.length - 1 ||
+            onPressed:
+                (currentIndex < currentTopics.length - 1 ||
                     Get.find<PearlsController>().chaptersList.indexWhere(
-                            (c) => c.id == currentChapterId) <
+                          (c) => c.id == currentChapterId,
+                        ) <
                         Get.find<PearlsController>().chaptersList.length - 1)
                 ? _navigateToNext
                 : null,
             icon: Icons.arrow_forward_ios,
-            label: currentIndex < currentTopics.length - 1 ? "Next" : "Next Chapter",
+            label: currentIndex < currentTopics.length - 1
+                ? "Next"
+                : "Next Chapter",
             isLeft: false,
           ),
         ],
@@ -350,8 +357,6 @@ class _CodonDetailScreenState extends State<CodonDetailScreen> {
   //     ),
   //   );
   // }
-
-
 
   Widget _buildTopicInfo(TopicDetailModel detail) {
     return Column(

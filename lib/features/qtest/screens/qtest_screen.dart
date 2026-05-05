@@ -53,7 +53,7 @@ class QTestScreen extends StatelessWidget {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
-                  final subjects = snapshot.data!;
+                  final subjects = snapshot.data!.reversed.toList();
                   return ListView.builder(
                     padding: EdgeInsets.symmetric(
                       horizontal: 0.04.toWidthPercent(),

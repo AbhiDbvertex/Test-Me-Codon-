@@ -234,7 +234,6 @@ import 'package:get/get.dart';
 
 import '../../pearls/controllers/pearls_controller.dart';
 
-
 class BookmarkController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final HomeService _homeService = Get.find<HomeService>();
@@ -259,8 +258,7 @@ class BookmarkController extends GetxController
 
   // In BookmarkController
 
-// Reactive map: mcqId → category
-
+  // Reactive map: mcqId → category
 
   bool isBookmarked(String itemId) {
     return _bookmarkedItems.containsKey(itemId);
@@ -364,7 +362,7 @@ class BookmarkController extends GetxController
         _bookmarkedItems.clear();
         for (var bm in allData) {
           if (bm.category != 'removed' && bm.category.isNotEmpty) {
-            _bookmarkedItems[bm.id ?? bm.id ?? ''] = bm.category;
+            _bookmarkedItems[bm.itemId] = bm.category;
           }
         }
         // ────────────────────────────────────────────────────────
@@ -400,10 +398,7 @@ class BookmarkController extends GetxController
 
       if (category == 'removed' || category.isEmpty) {
         // ── Remove flow: call the separate remove API ──
-        res = await _homeService.removeBookmark(
-          type: type,
-          itemId: itemId,
-        );
+        res = await _homeService.removeBookmark(type: type, itemId: itemId);
       } else {
         // ── Add/update flow: call toggle API ──
         res = await _homeService.toggleBookmark(
@@ -424,24 +419,27 @@ class BookmarkController extends GetxController
 
         // Update pearls controller
         final pearlsController = Get.find<PearlsController>();
-        var chapter = pearlsController.chaptersList
-            .firstWhereOrNull((e) => e.id == itemId);
+        var chapter = pearlsController.chaptersList.firstWhereOrNull(
+          (e) => e.id == itemId,
+        );
         if (chapter != null) {
           chapter.isBookMarked.value =
               category != 'removed' && category.isNotEmpty;
           chapter.bookMarkedCategory.value = category;
         }
 
-        Get.snackbar('Success', res['message'],
-            snackPosition: SnackPosition.TOP);
+        Get.snackbar(
+          'Success',
+          res['message'],
+          snackPosition: SnackPosition.TOP,
+        );
       } else {
         String errorMessage = res['message'] ?? "Something went wrong";
         if (errorMessage.contains("E11000") ||
             errorMessage.contains("duplicate key")) {
           errorMessage = "This item is already in your bookmarks!";
         }
-        Get.snackbar('Alert', errorMessage,
-            snackPosition: SnackPosition.TOP);
+        Get.snackbar('Alert', errorMessage, snackPosition: SnackPosition.TOP);
       }
     } catch (e) {
       print("Error toggling/removing bookmark: $e");
@@ -497,7 +495,4 @@ class BookmarkController extends GetxController
   //     Get.snackbar('Error', 'Failed to update bookmark.');
   //   }
   // }
-
-
-
 }

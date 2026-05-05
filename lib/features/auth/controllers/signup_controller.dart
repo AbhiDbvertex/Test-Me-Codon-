@@ -18,7 +18,7 @@ class SignUpController extends GetxController {
   final firstNameController = TextEditingController();
   final emailController = TextEditingController();
   final mobileController = TextEditingController();
-  // final addressController = TextEditingController();
+  final addressController = TextEditingController();
   final collegeController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -96,7 +96,7 @@ class SignUpController extends GetxController {
       print("user name ${firstNameController.text}");
       print("user email ${emailController.text}");
       print("user mobile ${mobileController.text}");
-      // print("user address ${addressController.text}");
+      print("user address ${addressController.text}");
       print("user college ${collegeController.text}");
       print("user password ${passwordController.text}");
       print("user admission year ${selectedYear.value}");
@@ -109,7 +109,7 @@ class SignUpController extends GetxController {
           name: firstNameController.text,
           emailOrPhone: emailController.text,
           mobile: mobileController.text,
-          address: "",
+          address: addressController.text ?? "",
           collegeName: collegeController.text,
           password: passwordController.text,
           admissionYear: selectedYear.value ?? "",
@@ -147,31 +147,85 @@ class SignUpController extends GetxController {
   }
 
   bool _validateFields() {
-    if (firstNameController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        mobileController.text.isEmpty ||
-        // addressController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty ||
-        selectedState.value == null ||
-        selectedCity.value == null) {
-      Get.snackbar(
-        'Error',
-        'Please fill all required fields',
-        snackPosition: SnackPosition.TOP,
-      );
+    if (firstNameController.text.trim().isEmpty) {
+      _showError('Please enter your name');
       return false;
     }
+
+    final email = emailController.text.trim();
+    if (email.isEmpty) {
+      _showError('Please enter your email');
+      return false;
+    }
+    if (!GetUtils.isEmail(email)) {
+      _showError('Please enter a valid email address');
+      return false;
+    }
+
+    final mobile = mobileController.text.trim();
+    if (mobile.isEmpty) {
+      _showError('Please enter your mobile number');
+      return false;
+    }
+    if (mobile.length != 10 || !GetUtils.isNumericOnly(mobile)) {
+      _showError('Please enter a valid 10-digit mobile number');
+      return false;
+    }
+
+    if (addressController.text.trim().isEmpty) {
+      _showError('Please enter your address');
+      return false;
+    }
+
+    if (selectedState.value == null) {
+      _showError('Please select your state');
+      return false;
+    }
+
+    if (selectedCity.value == null) {
+      _showError('Please select your city');
+      return false;
+    }
+
+    if (collegeController.text.trim().isEmpty) {
+      _showError('Please enter your college name');
+      return false;
+    }
+
+    if (selectedYear.value == null) {
+      _showError('Please select passing year');
+      return false;
+    }
+
+    if (passwordController.text.isEmpty) {
+      _showError('Please enter a password');
+      return false;
+    }
+
+    if (passwordController.text.length < 6) {
+      _showError('Password must be at least 6 characters');
+      return false;
+    }
+
     if (passwordController.text != confirmPasswordController.text) {
-      Get.snackbar(
-        'Error',
-        'Passwords do not match',
-        snackPosition: SnackPosition.TOP,
-      );
+      _showError('Passwords do not match');
       return false;
     }
 
     return true;
+  }
+
+  void _showError(String message) {
+    Get.snackbar(
+      'Validation Error',
+      message,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.redAccent,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(10),
+      borderRadius: 10,
+      duration: const Duration(seconds: 2),
+    );
   }
 
   void googleSignIn() async {

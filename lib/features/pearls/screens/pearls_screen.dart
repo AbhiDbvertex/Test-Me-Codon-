@@ -66,7 +66,7 @@ class PearlsScreen extends StatelessWidget {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       }
                       if (snapshot.hasData) {
-                        final subjects = snapshot.data!;
+                        final subjects = snapshot.data!.reversed.toList();
                         if (subjects.isEmpty) {
                           return const Center(
                             child: Text(

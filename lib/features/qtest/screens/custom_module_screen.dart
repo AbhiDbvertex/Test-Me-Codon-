@@ -2590,7 +2590,7 @@ class CustomModuleScreen extends StatelessWidget {
                     Obx(
                       () => _buildMultiSelectExpander(
                         title: 'Select Subject',
-                        items: controller.subjects,
+                        items: controller.subjects.reversed.toList(),
                         selectedIds: controller.selectedSubjectIds,
                         getId: (s) => (s as SubjectModel).id,
                         getName: (s) => (s as SubjectModel).name,
@@ -2612,7 +2612,7 @@ class CustomModuleScreen extends StatelessWidget {
                         children: [
                           _buildMultiSelectExpander(
                             title: 'Select Sub-Subject',
-                            items: controller.subSubjects,
+                            items: controller.subSubjects.reversed.toList(),
                             selectedIds: controller.selectedSubSubjectIds,
                             getId: (s) => (s as SubSubjectModel).id,
                             getName: (s) => (s as SubSubjectModel).name,

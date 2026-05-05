@@ -1,4 +1,4 @@
-﻿import 'package:codon/features/test/controllers/tests_controller.dart';
+import 'package:codon/features/test/controllers/tests_controller.dart';
 import 'package:codon/utills/api_urls.dart';
 import 'package:codon/utills/screen_size_utils.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,10 @@ class TestMCQScreen extends StatelessWidget {
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.white,
             elevation: 0,
-            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: const Icon(Icons.grid_view_rounded, color: AppColors.primary),
+              onPressed: () => _showReviewSheet(context, controller),
+            ),
             actions: [
               Center(
                 child: Obx(
@@ -254,12 +257,21 @@ class TestMCQScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                _buildBottomNav(controller),
+                _buildBottomNav(context, controller),
               ],
             );
           }),
         ),
       ),
+    );
+  }
+
+  void _showReviewSheet(BuildContext context, TestsController controller) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _ReviewSheet(controller: controller),
     );
   }
 
@@ -448,7 +460,7 @@ class TestMCQScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNav(TestsController controller) {
+  Widget _buildBottomNav(BuildContext context, TestsController controller) {
     return Padding(
       padding: EdgeInsets.all(0.04.toWidthPercent()),
       child: Row(
@@ -525,6 +537,189 @@ class TestMCQScreen extends StatelessWidget {
           fontSize: 13,
           fontWeight: FontWeight.bold,
         ),
+      ),
+    );
+  }
+}
+
+class _ReviewSheet extends StatefulWidget {
+  final TestsController controller;
+  const _ReviewSheet({required this.controller});
+
+  @override
+  State<_ReviewSheet> createState() => _ReviewSheetState();
+}
+
+class _ReviewSheetState extends State<_ReviewSheet> {
+  int selectedPart = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = widget.controller;
+    int questionsPerPart = 25;
+    int totalParts = (controller.questionsList.length / questionsPerPart).ceil();
+    if (totalParts == 0) totalParts = 1;
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 40),
+                Obx(() => Text(
+                      controller.timeDisplay.value,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    )),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+          if (totalParts > 1)
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(totalParts, (index) {
+                  bool isSelected = selectedPart == index;
+                  return InkWell(
+                    onTap: () => setState(() => selectedPart = index),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: isSelected
+                                ? AppColors.primary
+                                : Colors.transparent,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        "Part ${index + 1}",
+                        style: TextStyle(
+                          color: isSelected ? AppColors.primary : Colors.grey,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Obx(() => Text(
+                  "Currently attempting question ${controller.currentQuestionIndex.value + 1}",
+                  style: const TextStyle(color: Colors.grey),
+                )),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Obx(() {
+                int start = selectedPart * questionsPerPart;
+                int end =
+                    (start + questionsPerPart) > controller.questionsList.length
+                        ? controller.questionsList.length
+                        : (start + questionsPerPart);
+
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 1.1,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: end - start,
+                  itemBuilder: (context, index) {
+                    int questionIdx = start + index;
+                    final question = controller.questionsList[questionIdx];
+                    final qId = question['id'];
+                    bool isAttempted = controller.userSelections[qId] != null;
+                    bool isCurrent =
+                        controller.currentQuestionIndex.value == questionIdx;
+
+                    return InkWell(
+                      onTap: () {
+                        controller.pageController.jumpToPage(questionIdx);
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isCurrent
+                              ? AppColors.primary.withOpacity(0.8)
+                              : (isAttempted
+                                  ? AppColors.primary.withOpacity(0.1)
+                                  : Colors.white),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isCurrent
+                                ? AppColors.primary
+                                : Colors.grey.shade300,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            "${questionIdx + 1}",
+                            style: TextStyle(
+                              color: isCurrent ? Colors.white : Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  controller.submitTest();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary.withOpacity(0.4),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+                child: const Text("SUBMIT",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
