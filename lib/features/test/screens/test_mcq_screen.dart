@@ -135,26 +135,10 @@ class TestMCQScreen extends StatelessWidget {
                                           final bookmarkCtrl =
                                               Get.find<BookmarkController>();
 
-                                          bool isMost = bookmarkCtrl
-                                              .mostImportantBookmarks
-                                              .any((b) => b.mcq?.id == qId);
-                                          bool isVery = bookmarkCtrl
-                                              .veryImportantBookmarks
-                                              .any((b) => b.mcq?.id == qId);
-                                          bool isImp = bookmarkCtrl
-                                              .importantBookmarks
-                                              .any((b) => b.mcq?.id == qId);
-
                                           bool isBookmarked =
-                                              isMost || isVery || isImp;
-
-                                          String category = "";
-                                          if (isMost)
-                                            category = "mostimportant";
-                                          else if (isVery)
-                                            category = "veryimportant";
-                                          else if (isImp)
-                                            category = "important";
+                                              bookmarkCtrl.isBookmarked(qId);
+                                          String category =
+                                              bookmarkCtrl.getCategory(qId);
 
                                           Color iconColor = AppColors.primary
                                               .withOpacity(0.5);
@@ -179,14 +163,6 @@ class TestMCQScreen extends StatelessWidget {
                                                 itemId: qId,
                                                 category: value,
                                               );
-                                              bookmarkCtrl
-                                                  .mostImportantBookmarks
-                                                  .refresh();
-                                              bookmarkCtrl
-                                                  .veryImportantBookmarks
-                                                  .refresh();
-                                              bookmarkCtrl.importantBookmarks
-                                                  .refresh();
                                             },
                                             itemBuilder: (context) => [
                                               _buildPopupItem(

@@ -88,7 +88,7 @@ class AuthServiceImpl implements AuthService {
     required String admissionYear,
   }) async {
     final url = Uri.parse(registerUrl);
-
+    print("passing uear $admissionYear");
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
